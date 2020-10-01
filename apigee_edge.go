@@ -44,16 +44,17 @@ type EdgeClient struct {
 	UserAgent string
 
 	// Services used for communicating with the API
-	Proxies            ProxiesService
-	TargetServers      TargetServersService
-	Products           ProductsService
-	Developers         DeveloperService
-	Companies          CompanyService
-	CompanyApps        CompanyAppService
-	DeveloperApps      DeveloperAppService
-	SharedFlows        SharedFlowService
-	KeyValueMaps       KeyValueMapService
-	KeyValueMapEntries KeyValueMapEntryService
+	Proxies               ProxiesService
+	TargetServers         TargetServersService
+	Products              ProductsService
+	Developers            DeveloperService
+	Companies             CompanyService
+	CompanyApps           CompanyAppService
+	CompanyAppCredentials CompanyAppCredentialService
+	DeveloperApps         DeveloperAppService
+	SharedFlows           SharedFlowService
+	KeyValueMaps          KeyValueMapService
+	KeyValueMapEntries    KeyValueMapEntryService
 
 	// Account           AccountService
 	// Actions           ActionsService
@@ -200,6 +201,7 @@ func NewEdgeClient(o *EdgeClientOptions) (*EdgeClient, error) {
 	c.Developers = &DeveloperServiceOp{client: c}
 	c.Companies = &CompanyServiceOp{client: c}
 	c.CompanyApps = &CompanyAppServiceOp{client: c}
+	c.CompanyAppCredentials = &CompanyAppCredentialServiceOp{client: c}
 	c.DeveloperApps = &DeveloperAppServiceOp{client: c}
 	c.SharedFlows = &SharedFlowServiceOp{client: c}
 	c.KeyValueMaps = &KeyValueMapServiceOp{client: c}
