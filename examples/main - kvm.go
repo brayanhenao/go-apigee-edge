@@ -3,8 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-
-	"<fullpath>/go-apigee-edge"
+	"github.com/brayanhenao/go-apigee-edge"
 )
 
 func usage() {
