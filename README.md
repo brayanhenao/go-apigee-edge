@@ -35,7 +35,7 @@ These items may be added later as need and demand warrants.
 
 ## Copyright and License
 
-This code is [Copyright (c) 2016 Apigee Corp](NOTICE). it is licensed under the [Apache 2.0 Source Licese](LICENSE).
+This code is [Copyright (c) 2016 Apigee Corp, 2017-2020 Google LLC](NOTICE). it is licensed under the [Apache 2.0 Source Licese](LICENSE).
 
 
 ## Status
