@@ -57,6 +57,7 @@ This project is a work-in-progress. Here's the status:
 | kvm           | query, create, delete,  get entry, add entry, modify entry, remove entry | list, get all entries
 | cache         | list, query | create, delete, clear |
 | environment   | list, query | |
+| virtualhosts  | list, query, create, delete, update | |
 
 Pull requests are welcomed.
 
