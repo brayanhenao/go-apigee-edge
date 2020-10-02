@@ -1,4 +1,4 @@
 {
-  "orgname": "gaccelerate3",
-  "notes" : "by default this will authenticate via .netrc"
+  "orgName": "your-test-organization",
+  "notes": "by default this will authenticate via .netrc"
 }
