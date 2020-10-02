@@ -32,8 +32,8 @@ type ApigeeClient struct {
 	CompanyAppCredentials CompanyAppCredentialsService
 	Developers            DevelopersService
 	Environments          EnvironmentsService
-	KeyValueMaps          KeyValueMapService
-	KeyValueMapEntries    KeyValueMapEntryService
+	KeyValueMaps          KeyValueMapsService
+	KeyValueMapEntries    KeyValueMapEntriesService
 	Options               ApigeeClientOptions
 	Organization          OrganizationService
 	Products              ProductsService

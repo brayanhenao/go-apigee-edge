@@ -4,21 +4,21 @@ import "path"
 
 const entriesPath = "entries"
 
-// KeyValueMapEntryService is an interface for interfacing with the Apigee Edge Admin API
+// KeyValueMapEntriesService is an interface for interfacing with the Apigee Edge Admin API
 // dealing with KeyValueMapEntry.
-type KeyValueMapEntryService interface {
+type KeyValueMapEntriesService interface {
 	Get(string, string, string) (*KeyValueMapEntry, *Response, error)
 	Create(string, KeyValueMapEntryKeys, string) (*KeyValueMapEntry, *Response, error)
 	Delete(string, string, string) (*Response, error)
 	Update(string, KeyValueMapEntryKeys, string) (*KeyValueMapEntry, *Response, error)
 }
 
-// KeyValueMapEntryServiceOp holds creds
-type KeyValueMapEntryServiceOp struct {
+// KeyValueMapEntriesServiceOp holds creds
+type KeyValueMapEntriesServiceOp struct {
 	client *ApigeeClient
 }
 
-var _ KeyValueMapEntryService = &KeyValueMapEntryServiceOp{}
+var _ KeyValueMapEntriesService = &KeyValueMapEntriesServiceOp{}
 
 // KeyValueMapEntryKeys to update
 type KeyValueMapEntryKeys struct {
@@ -33,7 +33,7 @@ type KeyValueMapEntry struct {
 }
 
 // Get the key value map entry
-func (s *KeyValueMapEntryServiceOp) Get(keyValueMapName string, env string, keyValueMapEntry string) (*KeyValueMapEntry, *Response, error) {
+func (s *KeyValueMapEntriesServiceOp) Get(keyValueMapName string, env string, keyValueMapEntry string) (*KeyValueMapEntry, *Response, error) {
 
 	path := path.Join(environmentsPath, env, kvmPath, keyValueMapName, entriesPath, keyValueMapEntry)
 
@@ -51,20 +51,20 @@ func (s *KeyValueMapEntryServiceOp) Get(keyValueMapName string, env string, keyV
 }
 
 // Create a new key value map entry
-func (s *KeyValueMapEntryServiceOp) Create(keyValueMapName string, keyValueMapEntry KeyValueMapEntryKeys, env string) (*KeyValueMapEntry, *Response, error) {
+func (s *KeyValueMapEntriesServiceOp) Create(keyValueMapName string, keyValueMapEntry KeyValueMapEntryKeys, env string) (*KeyValueMapEntry, *Response, error) {
 
 	return postOrPutKeyValueMapEntry(keyValueMapName, keyValueMapEntry, env, "POST", s)
 }
 
 // Update an existing key value map entry
-func (s *KeyValueMapEntryServiceOp) Update(keyValueMapName string, keyValueMapEntry KeyValueMapEntryKeys, env string) (*KeyValueMapEntry, *Response, error) {
+func (s *KeyValueMapEntriesServiceOp) Update(keyValueMapName string, keyValueMapEntry KeyValueMapEntryKeys, env string) (*KeyValueMapEntry, *Response, error) {
 
 	return postOrPutKeyValueMapEntry(keyValueMapName, keyValueMapEntry, env, "PUT", s)
 
 }
 
 // Delete an existing key value map entry
-func (s *KeyValueMapEntryServiceOp) Delete(keyValueMapEntry string, keyValueMapName string, env string) (*Response, error) {
+func (s *KeyValueMapEntriesServiceOp) Delete(keyValueMapEntry string, keyValueMapName string, env string) (*Response, error) {
 
 	path := path.Join(environmentsPath, env, kvmPath, keyValueMapName, entriesPath, keyValueMapEntry)
 
@@ -82,7 +82,7 @@ func (s *KeyValueMapEntryServiceOp) Delete(keyValueMapEntry string, keyValueMapN
 
 }
 
-func postOrPutKeyValueMapEntry(keyValueMapName string, keyValueMapEntry KeyValueMapEntryKeys, env string, opType string, s *KeyValueMapEntryServiceOp) (*KeyValueMapEntry, *Response, error) {
+func postOrPutKeyValueMapEntry(keyValueMapName string, keyValueMapEntry KeyValueMapEntryKeys, env string, opType string, s *KeyValueMapEntriesServiceOp) (*KeyValueMapEntry, *Response, error) {
 
 	uripath := ""
 

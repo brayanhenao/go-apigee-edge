@@ -15,6 +15,7 @@ import (
 	"os"
 	"path"
 	"reflect"
+
 	//"strconv"
 	//"time"
 
@@ -103,14 +104,20 @@ func NewApigeeClient(o *ApigeeClientOptions) (*ApigeeClient, error) {
 	baseURL.Path = path.Join(baseURL.Path, "v1/o/", o.Org, "/")
 
 	c := &ApigeeClient{client: httpClient, BaseURL: baseURL, UserAgent: userAgent}
-	c.SharedFlows = &SharedFlowsServiceOp{client: c}
-	c.Proxies = &ProxiesServiceOp{client: c}
-	c.Products = &ProductsServiceOp{client: c}
+	c.Caches = &CachesServiceOp{client: c}
+	c.Companies = &CompaniesServiceOp{client: c}
+	c.CompanyApps = &CompanyAppsServiceOp{client: c}
+	c.CompanyAppCredentials = &CompanyAppCredentialsServiceOp{client: c}
 	c.Developers = &DevelopersServiceOp{client: c}
 	c.Environments = &EnvironmentsServiceOp{client: c}
-	c.Organization = &OrganizationServiceOp{client: c}
-	c.Caches = &CachesServiceOp{client: c}
+	c.KeyValueMaps = &KeyValueMapsServiceOp{client: c}
+	c.KeyValueMapEntries = &KeyValueMapEntriesServiceOp{client: c}
 	c.Options = *o
+	c.Organization = &OrganizationServiceOp{client: c}
+	c.Products = &ProductsServiceOp{client: c}
+	c.Proxies = &ProxiesServiceOp{client: c}
+	c.TargetServers = &TargetServersServiceOp{client: c}
+	c.SharedFlows = &SharedFlowsServiceOp{client: c}
 
 	var e error = nil
 	if o.Auth == nil {

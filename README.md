@@ -15,6 +15,7 @@ The goal is to allow golang programs to easiy do these things:
 | kvm           | list, query, create, delete, get all entries, get entry, add entry, modify entry, remove entry
 | cache         | list, query, create, delete, clear
 | environment   | list, query
+| virtualhosts  | list, query, create, delete, update
 
 The Apigee administrative API is just a REST-ful API, so of course any go program could invoke it directly. This library will provide a wrapper, which will make it easier.
 
@@ -70,7 +71,7 @@ This shows the reference to import.
 package main
 
 import (
-  "github.com/DinoChiesa/go-apigee-edge"
+  "github.com/brayanhenao/go-apigee-edge"
 )
 ```
 
@@ -107,7 +108,7 @@ import (
   "fmt"
   "flag"
   "time"
-  "github.com/DinoChiesa/go-apigee-edge"
+  "github.com/brayanhenao/go-apigee-edge"
 )
 
 func usage() {
