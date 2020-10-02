@@ -1,78 +1,37 @@
-// Package apigee provides a client for administering Apigee Edge.
+// Package apigee provides a client for administering Apigee
 package apigee
 
 import (
-	"bytes"
-	"encoding/json"
-	"errors"
-	"fmt"
-	"io"
-	"io/ioutil"
-	"log"
-	"net/http"
-	"net/http/httputil"
-	"net/url"
-	"os"
-	"path"
-	"reflect"
+  "bytes"
+  "encoding/json"
+  "fmt"
+  "os"
+  "path"
+  "errors"
+  "log"
+  "io"
+  "io/ioutil"
+  "net/http"
+  "net/http/httputil"
+  "net/url"
+  "reflect"
+  //"strconv"
+  //"time"
 
-	"github.com/bgentry/go-netrc/netrc"
-	"github.com/google/go-querystring/query"
-	"github.com/sethgrid/pester"
+  "github.com/google/go-querystring/query"
+  "github.com/bgentry/go-netrc/netrc"
 )
 
 const (
-	libraryVersion = "0.2.0"
-	defaultBaseURL = "https://api.enterprise.apigee.com/"
-	userAgent      = "go-apigee-edge/" + libraryVersion
-	appJSON        = "application/json"
-	octetStream    = "application/octet-stream"
+  libraryVersion = "0.2.0"
+  defaultBaseURL = "https://api.enterprise.apigee.com/"
+  userAgent      = "go-apigee-edge/" + libraryVersion
+  appJson        = "application/json"
+  octetStream    = "application/octet-stream"
+	apiUriPathElement = "apis"
+	sfUriPathElement = "sharedflows"
+	DeploymentDelay = "20"
 )
-
-// EdgeClient manages communication with Apigee Edge V1 Admin API.
-type EdgeClient struct {
-	// HTTP client used to communicate with the Edge API.
-	client pester.Client
-
-	auth  *EdgeAuth
-	debug bool
-
-	// Base URL for API requests.
-	BaseURL *url.URL
-
-	// User agent for client
-	UserAgent string
-
-	// Services used for communicating with the API
-	Proxies               ProxiesService
-	TargetServers         TargetServersService
-	Products              ProductsService
-	Developers            DeveloperService
-	Companies             CompanyService
-	CompanyApps           CompanyAppService
-	CompanyAppCredentials CompanyAppCredentialService
-	DeveloperApps         DeveloperAppService
-	SharedFlows           SharedFlowService
-	KeyValueMaps          KeyValueMapService
-	KeyValueMapEntries    KeyValueMapEntryService
-
-	// Account           AccountService
-	// Actions           ActionsService
-	// Domains           DomainsService
-	// DropletActions    DropletActionsService
-	// Images            ImagesService
-	// ImageActions      ImageActionsService
-	// Regions           RegionsService
-	// Sizes             SizesService
-	// FloatingIPs       FloatingIPsService
-	// FloatingIPActions FloatingIPActionsService
-	// Storage           StorageService
-	// StorageActions    StorageActionsService
-	// Tags              TagsService
-
-	// Optional function called after every successful request made to the DO APIs
-	onRequestCompleted RequestCompletionCallback
-}
 
 // RequestCompletionCallback defines the type of the request callback function
 type RequestCompletionCallback func(*http.Request, *http.Response)
@@ -81,20 +40,6 @@ type RequestCompletionCallback func(*http.Request, *http.Response)
 type ListOptions struct {
 	// to ask for expanded results
 	Expand bool `url:"expand"`
-}
-
-// wrap the standard http.Response returned from Apigee Edge. (why?)
-type Response struct {
-	*http.Response
-}
-
-// An ErrorResponse reports the error caused by an API request
-type ErrorResponse struct {
-	// HTTP response that caused this error
-	Response *http.Response
-
-	// Error message - maybe the json for this is "fault"
-	Message string `json:"message"`
 }
 
 func addOptions(s string, opt interface{}) (string, error) {
@@ -124,172 +69,183 @@ func addOptions(s string, opt interface{}) (string, error) {
 	return origURL.String(), nil
 }
 
-type EdgeClientOptions struct {
-	pesterClient *pester.Client
-
-	// Optional. The Admin base URL. For example, if using OPDK this might be
-	// http://192.168.10.56:8080 . It defaults to https://api.enterprise.apigee.com
-	MgmtUrl string
-
-	// Specify the Edge organization name.
-	Org string
-
-	// Required. Authentication information for the Edge Management server.
-	Auth *EdgeAuth
-
-	// Optional. Warning: if set to true, HTTP Basic Auth base64 blobs will appear in output.
-	Debug bool
+func retrieveAuthFromNetrc(netrcPath, host string) (*AdminAuth, error) {
+  if netrcPath == "" {
+    netrcPath = os.ExpandEnv("${HOME}/.netrc")
+  }
+  n, e := netrc.ParseFile(netrcPath)
+  if e != nil {
+    fmt.Printf("while parsing .netrc, error:\n%#v\n", e)
+    return nil, e
+  }
+  machine := n.FindMachine(host) // eg, "api.enterprise.apigee.com"
+  if machine == nil || machine.Password == "" {
+    msg := fmt.Sprintf("while scanning %s, cannot find machine:%s", netrcPath, host)
+    return nil, errors.New(msg)
+  }
+  auth := &AdminAuth{Username: machine.Login, Password: machine.Password}
+  return auth, nil
 }
 
-// EdgeAuth holds information about how to authenticate to the Edge Management server.
-type EdgeAuth struct {
-	// Optional. The path to the .netrc file that holds credentials for the Edge Management server.
-	// By default, this is ${HOME}/.netrc .  If you specify a Password, this option is ignored.
-	NetrcPath string
+// NewApigeeClient returns a new ApigeeClient.
+func NewApigeeClient(o *ApigeeClientOptions) (*ApigeeClient,error) {
+  httpClient := o.httpClient
+  if o.httpClient == nil {
+    httpClient = http.DefaultClient
+  }
+  mgmtUrl := o.MgmtUrl
+  if o.MgmtUrl == "" {
+    mgmtUrl = defaultBaseURL
+  }
+  baseURL, err := url.Parse(mgmtUrl)
+  if err != nil {
+    return nil, err
+  }
+  baseURL.Path = path.Join(baseURL.Path, "v1/o/", o.Org, "/")
 
-	// Optional. The username to use when authenticating to the Edge Management server.
-	// Ignored if you specify a NetrcPath.
-	Username string
+  c := &ApigeeClient{client: httpClient, BaseURL: baseURL, UserAgent: userAgent}
+  c.SharedFlows = &SharedFlowsServiceOp{client: c}
+  c.Proxies = &ProxiesServiceOp{client: c}
+  c.Products = &ProductsServiceOp{client: c}
+  c.Developers = &DevelopersServiceOp{client: c}
+  c.Environments = &EnvironmentsServiceOp{client: c}
+  c.Organization = &OrganizationServiceOp{client: c}
+  c.Caches = &CachesServiceOp{client: c}
+  c.Options = *o;
 
-	// Optional. Used if you explicitly specify a Password.
-	Password string
+  var e error = nil
+  if o.Auth == nil {
+    c.auth, e = retrieveAuthFromNetrc("", baseURL.Host)
+  } else if o.Auth.Password == "" {
+    c.auth, e = retrieveAuthFromNetrc(o.Auth.NetrcPath, baseURL.Host)
+  } else {
+    c.auth = &AdminAuth{Username: o.Auth.Username, Password: o.Auth.Password}
+  }
 
-	// Optional. Access token used for OAuth
-	AccessToken string
+	c.LoginBaseUrl = o.LoginBaseUrl
+	c.WantToken = o.WantToken
+
+  if e != nil {
+    return nil, e
+  }
+
+  if o.Debug {
+    c.debug = true
+    c.onRequestCompleted = func(req *http.Request, resp *http.Response)  {
+      debugDump(httputil.DumpResponse(resp, true))
+    }
+  }
+
+  return c, nil
 }
 
-func retrieveAuthFromNetrc(netrcPath, host string) (*EdgeAuth, error) {
-	if netrcPath == "" {
-		netrcPath = os.ExpandEnv("${HOME}/.netrc")
-	}
-	n, e := netrc.ParseFile(netrcPath)
-	if e != nil {
-		fmt.Printf("while parsing .netrc, error:\n%#v\n", e)
-		return nil, e
-	}
-	machine := n.FindMachine(host) // eg, "api.enterprise.apigee.com"
-	if machine == nil || machine.Password == "" {
-		msg := fmt.Sprintf("while scanning %s, cannot find machine:%s", netrcPath, host)
-		return nil, errors.New(msg)
-	}
-	auth := &EdgeAuth{Username: machine.Login, Password: machine.Password}
-	return auth, nil
-}
 
-// NewEdgeClient returns a new EdgeClient.
-func NewEdgeClient(o *EdgeClientOptions) (*EdgeClient, error) {
-	pesterClient := o.pesterClient
-	if o.pesterClient == nil {
-		pesterClient = pester.New()
-	}
-	pesterClient.MaxRetries = 5
-	pesterClient.Backoff = pester.LinearBackoff //n seconds where n is the retry number
-	mgmtUrl := o.MgmtUrl
-	if o.MgmtUrl == "" {
-		mgmtUrl = defaultBaseURL
-	}
-	baseURL, err := url.Parse(mgmtUrl)
-	if err != nil {
-		return nil, err
-	}
-	baseURL.Path = path.Join(baseURL.Path, "v1/o/", o.Org, "/")
-
-	c := &EdgeClient{client: *pesterClient, BaseURL: baseURL, UserAgent: userAgent}
-	c.Proxies = &ProxiesServiceOp{client: c}
-	c.TargetServers = &TargetServersServiceOp{client: c}
-	c.Products = &ProductsServiceOp{client: c}
-	c.Developers = &DeveloperServiceOp{client: c}
-	c.Companies = &CompanyServiceOp{client: c}
-	c.CompanyApps = &CompanyAppServiceOp{client: c}
-	c.CompanyAppCredentials = &CompanyAppCredentialServiceOp{client: c}
-	c.DeveloperApps = &DeveloperAppServiceOp{client: c}
-	c.SharedFlows = &SharedFlowServiceOp{client: c}
-	c.KeyValueMaps = &KeyValueMapServiceOp{client: c}
-	c.KeyValueMapEntries = &KeyValueMapEntryServiceOp{client: c}
-
-	var e error = nil
-	if o.Auth == nil {
-		c.auth, e = retrieveAuthFromNetrc("", baseURL.Host)
-	} else if o.Auth.AccessToken != "" {
-		c.auth = &EdgeAuth{AccessToken: o.Auth.AccessToken}
-	} else if o.Auth.Password == "" {
-		c.auth, e = retrieveAuthFromNetrc(o.Auth.NetrcPath, baseURL.Host)
-	} else {
-		c.auth = &EdgeAuth{Username: o.Auth.Username, Password: o.Auth.Password}
-	}
-
-	if e != nil {
-		return nil, e
-	}
-
-	if o.Debug {
-		c.debug = true
-		c.onRequestCompleted = func(req *http.Request, resp *http.Response) {
-			debugDump(httputil.DumpResponse(resp, true))
-		}
-	}
-
-	return c, nil
-}
+// // ClientOpt are options for New.
+// type ClientOpt func(*ApigeeClient) error
+//
+// // New returns a new instance of the client for the Apigee Edge Admin API
+// func New(httpClient *http.Client, opts ...ClientOpt) (*ApigeeClient, error) {
+//   c := NewClient(httpClient)
+//   for _, opt := range opts {
+//     if err := opt(c); err != nil {
+//       return nil, err
+//     }
+//   }
+//
+//   return c, nil
+// }
+//
+// // SetBaseURL is a client option for setting the base URL.
+// func SetBaseURL(baseurl string) ClientOpt {
+//   return func(c *Client) error {
+//     u, err := url.Parse(baseurl)
+//     if err != nil {
+//       return err
+//     }
+//
+//     c.BaseURL = u
+//     return nil
+//   }
+// }
+//
+// // SetUserAgent is a client option for adding a string to the user agent.
+// func SetUserAgent(ua string) ClientOpt {
+//   return func(c *Client) error {
+//     c.UserAgent = fmt.Sprintf("%s+%s", ua, c.UserAgent)
+//     return nil
+//   }
+// }
 
 // NewRequest creates an API request. A relative URL can be provided in urlStr,
 // which will be resolved to the BaseURL of the Client. Relative URLS should
 // always be specified without a preceding slash. If specified, the value
 // pointed to by body is JSON encoded and included in as the request body.
-func (c *EdgeClient) NewRequest(method, urlStr string, body interface{}, contentTypeOverride string) (*http.Request, error) {
-	rel, err := url.Parse(urlStr)
-	ctype := ""
-	if err != nil {
-		return nil, err
-	}
-	u := c.BaseURL.ResolveReference(rel)
-	u.Path = path.Join(c.BaseURL.Path, rel.Path)
+func (c *ApigeeClient) NewRequest(method, urlStr string, body interface{}) (*http.Request, error) {
+  rel, e := url.Parse(urlStr)
+  ctype := ""
+  if e != nil {
+    return nil, e
+  }
+  //fmt.Printf("BaseURL: %#v\n", c.BaseURL)
+  u := c.BaseURL.ResolveReference(rel)
+  // u, err := url.Parse(c.BaseURL)
+  // if err != nil {
+  //    return nil,err
+  // }
+  //
+  // c.BaseURL = u
+  u.Path = path.Join(c.BaseURL.Path, rel.Path)
 
-	fmt.Printf("u: %#v\n", u)
-
-	var req *http.Request
-	if body != nil {
-		switch body.(type) {
-		default:
-			ctype = appJSON
-			buf := new(bytes.Buffer)
-			err := json.NewEncoder(buf).Encode(body)
-			if err != nil {
-				return nil, err
-			}
-			req, err = http.NewRequest(method, u.String(), buf)
-		case io.Reader:
-			ctype = octetStream
-			req, err = http.NewRequest(method, u.String(), body.(io.Reader))
-		}
-	} else {
-		req, err = http.NewRequest(method, u.String(), nil)
+  if c.debug {
+		fmt.Printf("u: %#v\n", u)
 	}
 
-	if err != nil {
-		return nil, err
-	}
+  var req *http.Request
+  if body != nil {
+    switch body.(type) {
+      default:
+        ctype = appJson
+        buf := new(bytes.Buffer)
+        e := json.NewEncoder(buf).Encode(body)
+        if e != nil {
+          return nil, e
+        }
+        req, e = http.NewRequest(method, u.String(), buf)
+      case io.Reader:
+        ctype = octetStream
+        req, e = http.NewRequest(method, u.String(), body.(io.Reader))
+    }
+  } else {
+    req, e = http.NewRequest(method, u.String(), nil)
+  }
 
-	if contentTypeOverride != "" {
-		req.Header.Add("Content-Type", contentTypeOverride)
-	} else {
-		if ctype != "" {
-			req.Header.Add("Content-Type", ctype)
-		}
-		req.Header.Add("Accept", appJSON)
-		req.Header.Add("User-Agent", c.UserAgent)
-	}
-	if c.auth.AccessToken != "" {
-		req.Header.Add("Authorization", "Bearer "+c.auth.AccessToken)
+  if e != nil {
+    return nil, e
+  }
+
+  if ctype != "" {
+    req.Header.Add("Content-Type", ctype)
+  }
+  req.Header.Add("Accept", appJson)
+  req.Header.Add("User-Agent", c.UserAgent)
+
+	if c.WantToken {
+		token, e := GetToken(c)
+  if e != nil {
+    return nil, e
+  }
+
+		c.auth.Token = *token.AccessToken
+		req.Header.Add("Authorization", "Bearer " + c.auth.Token)
 	} else {
 		req.SetBasicAuth(c.auth.Username, c.auth.Password)
 	}
-	return req, nil
+  return req, nil
 }
 
 // sets the request completion callback for the API
-func (c *EdgeClient) OnRequestCompleted(rc RequestCompletionCallback) {
-	c.onRequestCompleted = rc
+func (c *ApigeeClient) OnRequestCompleted(rc RequestCompletionCallback) {
+  c.onRequestCompleted = rc
 }
 
 // newResponse creates a new Response for the provided http.Response
@@ -311,47 +267,47 @@ func debugDump(data []byte, err error) {
 // JSON decoded and stored in the value pointed to by v, or returned as an error
 // if an API error has occurred. If v implements the io.Writer interface, the
 // raw response will be written to v, without attempting to decode it.
-func (c *EdgeClient) Do(req *http.Request, v interface{}) (*Response, error) {
-	if c.debug {
-		debugDump(httputil.DumpRequestOut(req, true))
-	}
+func (c *ApigeeClient) Do(req *http.Request, v interface{}) (*Response, error) {
+  if c.debug {
+    debugDump(httputil.DumpRequestOut(req, true))
+  }
 
-	resp, err := c.client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	if c.onRequestCompleted != nil {
-		c.onRequestCompleted(req, resp)
-	}
+  resp, e := c.client.Do(req)
+  if e != nil {
+    return nil, e
+  }
+  if c.onRequestCompleted != nil {
+    c.onRequestCompleted(req, resp)
+  }
 
-	defer func() {
-		if rerr := resp.Body.Close(); err == nil {
-			err = rerr
-		}
-	}()
+  defer func() {
+    if error := resp.Body.Close(); e == nil {
+      e = error
+    }
+  }()
 
-	response := newResponse(resp)
+  response := newResponse(resp)
 
-	err = CheckResponse(resp)
-	if err != nil {
-		return response, err
-	}
+  e = CheckResponse(resp)
+  if e != nil {
+    return response, e
+  }
 
-	if v != nil {
-		if w, ok := v.(io.Writer); ok {
-			_, err := io.Copy(w, resp.Body)
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			err := json.NewDecoder(resp.Body).Decode(v)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
+  if v != nil {
+    if w, ok := v.(io.Writer); ok {
+      _, e := io.Copy(w, resp.Body)
+      if e != nil {
+        return nil, e
+      }
+    } else {
+      e := json.NewDecoder(resp.Body).Decode(v)
+      if e != nil {
+        return nil, e
+      }
+    }
+  }
 
-	return response, err
+  return response, e
 }
 
 func (r *ErrorResponse) Error() string {

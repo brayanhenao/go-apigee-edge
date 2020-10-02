@@ -22,18 +22,31 @@ var (
 )
 
 func TestTimestamp_Marshal(t *testing.T) {
-	testCases := []struct {
-		desc     string
-		data     Timestamp
-		expected string
-		wantErr  bool
-		equal    bool
-	}{
-		{"lastModified ", Timestamp{lastModifiedTime}, lastModifiedMs, false, true},
-		{"origin       ", Timestamp{unixOriginTime}, originMs, false, true},
-		{"workStartDate", Timestamp{workStartDate}, originMs, false, false},
-		{"workStartDate", Timestamp{workStartDate}, workStartMs, false, true},
-	}
+  testCases := []struct {
+    desc      string
+    data      Timestamp
+    expected  string
+    wantErr   bool
+    equal     bool
+  }{
+    {"lastModified ", Timestamp{lastModifiedTime}, lastModifiedMs, false, true},
+    {"origin       ", Timestamp{unixOriginTime}, originMs, false, true},
+    {"workStartDate", Timestamp{workStartDate}, originMs, false, false},
+    {"workStartDate", Timestamp{workStartDate}, workStartMs, false, true},
+  }
+
+  for _, tc := range testCases {
+    out, err := json.Marshal(tc.data)
+    if gotErr := (err != nil); gotErr != tc.wantErr {
+      t.Errorf("%s: gotErr=%v, wantErr=%v, err=%v", tc.desc, gotErr, tc.wantErr, err)
+    }
+    got := string(out)
+    equal := got == tc.expected
+    if (got == tc.expected) != tc.equal {
+      t.Errorf("%s: value[actual=%s, expected=%s], equal[actual=%v, expected=%v]", tc.desc, got, tc.expected, equal, tc.equal)
+    }
+  }
+}
 
 	for _, tc := range testCases {
 		out, err := json.Marshal(tc.data)
@@ -75,26 +88,27 @@ func TestTimestamp_Unmarshal(t *testing.T) {
 	}
 }
 
-func TestTimstamp_MarshalReflexivity(t *testing.T) {
-	testCases := []struct {
-		desc string
-		data Timestamp
-	}{
-		{"Reference", Timestamp{referenceTime}},
-		{"WorkStart", Timestamp{workStartDate}},
-		{"UnixOrigin", Timestamp{unixOriginTime}},
-		{"Empty", Timestamp{}}, // degenerate case.  I don't really care about this; it will never happen.
-	}
-	for _, tc := range testCases {
-		data, err := json.Marshal(tc.data)
-		if err != nil {
-			t.Errorf("%s: Marshal err=%v", tc.desc, err)
-		}
-		var got Timestamp
-		err = json.Unmarshal(data, &got)
-		t.Logf("%s: %+v ?= %s", tc.desc, got, string(data))
-		if got.String() != tc.data.String() {
-			t.Errorf("%s: %+v != %+v", tc.desc, got, data)
-		}
-	}
+
+func TestTimestamp_MarshalReflexivity(t *testing.T) {
+  testCases := []struct {
+    desc string
+    data Timestamp
+  }{
+    {"Reference", Timestamp{referenceTime}},
+    {"WorkStart", Timestamp{workStartDate}},
+    {"UnixOrigin", Timestamp{unixOriginTime}},
+    {"Empty", Timestamp{}}, // degenerate case.  I don't really care about this; it will never happen.
+  }
+  for _, tc := range testCases {
+    data, err := json.Marshal(tc.data)
+    if err != nil {
+      t.Errorf("%s: Marshal err=%v", tc.desc, err)
+    }
+    var got Timestamp
+    err = json.Unmarshal(data, &got)
+    t.Logf("%s: %+v ?= %s", tc.desc, got, string(data))
+    if got.String() != tc.data.String() {
+      t.Errorf("%s: %+v != %+v", tc.desc, got, data)
+    }
+  }
 }
