@@ -20,13 +20,12 @@ func (r *Revision) MarshalJSON() ([]byte, error) {
 // UnmarshalJSON implements the json.Unmarshaler interface. It unmarshals from
 // a string like "2" (including the quotes), into an integer 2.
 func (r *Revision) UnmarshalJSON(b []byte) error {
-	rev, e := strconv.ParseInt(strings.TrimSuffix(strings.TrimPrefix(string(b), "\""), "\""), 10, 32)
-	if e != nil {
-		return e
-	}
-
-	*r = Revision(rev)
-	return nil
+  rev, e := strconv.ParseInt(strings.TrimSuffix(strings.TrimPrefix(string(b),"\""),"\""), 10, 32)
+  if e != nil {
+    return e
+  }
+  *r = Revision(rev)
+  return nil
 }
 
 func (r Revision) String() string {
