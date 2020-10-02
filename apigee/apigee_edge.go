@@ -29,8 +29,7 @@ const (
 	userAgent       = "go-apigee-edge/" + libraryVersion
 	appJson         = "application/json"
 	octetStream     = "application/octet-stream"
-	DeploymentDelay = "20"
-	environment
+	deploymentDelay = "20"
 )
 
 // RequestCompletionCallback defines the type of the request callback function

@@ -367,7 +367,7 @@ func (s *Deployable) Deploy(client *ApigeeClient, uriPathElement, assetName, bas
 	q := origURL.Query()
 	q.Add("action", "deploy")
 	q.Add("override", "true")
-	q.Add("delay", DeploymentDelay)
+	q.Add("delay", deploymentDelay)
 	q.Add("env", env)
 	if basepath != "" {
 		q.Add("basepath", basepath)
