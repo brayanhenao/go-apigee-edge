@@ -33,7 +33,7 @@ type Developer struct {
 	LastName         string     `json:"lastName,omitempty"`
 	FirstName        string     `json:"firstName,omitempty"`
 	Status           string     `json:"status,omitempty"` // active, inactive, ??
-	Attributes       Attributes `json:"attributes,omitempty"`
+	Attributes       []Attribute `json:"attributes,omitempty"`
 	Companies        []string   `json:"companies,omitempty"`
 	OrganizationName string     `json:"organizationName,omitempty"`
 	Email            string     `json:"email,omitempty"`
