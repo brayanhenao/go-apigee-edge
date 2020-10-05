@@ -12,7 +12,7 @@ const developersPath = "developers"
 // dealing with developers.
 type DevelopersService interface {
 	Approve(string) (*Response, error)
-	Apps(string) DeveloperAppsService
+	GetApps(string) ([]DeveloperApp, *Response, error)
 	Create(Developer) (*Developer, *Response, error)
 	Delete(string) (*Developer, *Response, error)
 	Get(string) (*Developer, *Response, error)
@@ -156,21 +156,16 @@ func (s *DevelopersServiceOp) Approve(developerEmailOrId string) (*Response, err
 	return updateDeveloperStatus(*s, developerEmailOrId, "active")
 }
 
-// func (s *DevelopersServiceOp) GetApps(developerEmailOrId string) ([]DeveloperApp, *Response, error) {
-//   appsPath := path.Join(developersPath, developerEmailOrId, "apps") + "?expand=true"
-//   req, e := s.client.NewRequest("GET", appsPath, nil)
-//   if e != nil {
-//     return nil, nil, e
-//   }
-//   apps := make([]DeveloperApp,0)
-//   resp, e := s.client.Do(req, &apps)
-//   if e != nil {
-//     return nil, resp, e
-//   }
-//   return apps, resp, e
-// }
-
-func (s *DevelopersServiceOp) Apps(developerEmailOrId string) DeveloperAppsService {
-	devApps := &DeveloperAppsServiceOp{client: s.client, developerId: developerEmailOrId}
-	return devApps
+func (s *DevelopersServiceOp) GetApps(developerEmailOrId string) ([]DeveloperApp, *Response, error) {
+	appsPath := path.Join(developersPath, developerEmailOrId, "apps") + "?expand=true"
+	req, e := s.client.NewRequest("GET", appsPath, nil)
+	if e != nil {
+		return nil, nil, e
+	}
+	apps := make([]DeveloperApp, 0)
+	resp, e := s.client.Do(req, &apps)
+	if e != nil {
+		return nil, resp, e
+	}
+	return apps, resp, e
 }

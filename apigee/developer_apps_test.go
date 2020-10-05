@@ -52,10 +52,9 @@ func TestDeveloperAppCreateDelete(t *testing.T) {
 	defer teardown(t)
 	wait(1)
 
-	devapps := client.Developers.Apps(createdDeveloper.Email)
 	devapp, e := randomAppFromTemplate()
 
-	createdApp, resp, e := devapps.Create(devapp)
+	createdApp, resp, e := client.DeveloperApps.Create(createdDeveloper.Email, devapp)
 	if e != nil {
 		t.Errorf("while creating developer app, error:\n%#v\n", e)
 		return
@@ -64,7 +63,7 @@ func TestDeveloperAppCreateDelete(t *testing.T) {
 
 	wait(1)
 
-	resp, e = devapps.Revoke(createdApp.Name)
+	resp, e = client.DeveloperApps.Revoke(createdDeveloper.Email, createdApp.Name)
 	if e != nil {
 		t.Errorf("while revoking developer app, error:\n%#v\n", e)
 		return
@@ -72,7 +71,7 @@ func TestDeveloperAppCreateDelete(t *testing.T) {
 	t.Logf("RevokeApp")
 	wait(1)
 
-	got, resp, e := devapps.Get(createdApp.Name)
+	got, resp, e := client.DeveloperApps.Get(createdDeveloper.Email, createdApp.Name)
 	if e != nil {
 		t.Errorf("while getting developer app, error:\n%#v\n", e)
 		return
@@ -85,7 +84,7 @@ func TestDeveloperAppCreateDelete(t *testing.T) {
 	}
 	t.Logf("GetApp")
 
-	resp, e = devapps.Approve(createdApp.Name)
+	resp, e = client.DeveloperApps.Approve(createdDeveloper.Email, createdApp.Name)
 	if e != nil {
 		t.Errorf("while approving developer app, error:\n%#v\n", e)
 		return
@@ -94,7 +93,7 @@ func TestDeveloperAppCreateDelete(t *testing.T) {
 
 	wait(1)
 
-	got, resp, e = devapps.Get(createdApp.Name)
+	got, resp, e = client.DeveloperApps.Get(createdDeveloper.Email, createdApp.Name)
 	if e != nil {
 		t.Errorf("while getting developer app, error:\n%#v\n", e)
 		return
@@ -107,7 +106,7 @@ func TestDeveloperAppCreateDelete(t *testing.T) {
 	}
 	t.Logf("GetApp")
 
-	deletedApp, resp, e := devapps.Delete(createdApp.Name)
+	deletedApp, resp, e := client.DeveloperApps.Delete(createdDeveloper.Email, createdApp.Name)
 	if e != nil {
 		t.Errorf("while creating developer app, error:\n%#v\n", e)
 		return
