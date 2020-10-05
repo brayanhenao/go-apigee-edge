@@ -7,11 +7,9 @@ const kvmPath = "keyvaluemaps"
 // KeyValueMapsService is an interface for interfacing with the Apigee Edge Admin API
 // dealing with KeyValueMap.
 type KeyValueMapsService interface {
-	Get(string, string) (*KeyValueMap, *Response, error)
 	Create(KeyValueMap, string) (*KeyValueMap, *Response, error)
 	Delete(string, string) (*Response, error)
-	//update is not implemented as the API is being deprectated. See KeyValueMapEntry.
-	//	Update(KeyValueMap, string) (*KeyValueMap, *Response, error)
+	Get(string, string) (*KeyValueMap, *Response, error)
 }
 
 // KeyValueMapsServiceOp holds creds
@@ -29,9 +27,9 @@ type EntryStruct struct {
 
 // KeyValueMap Holds the Key value map
 type KeyValueMap struct {
-	Name      string        `json:"name,omitempty"`
 	Encrypted bool          `json:"encrypted,omitempty"`
 	Entry     []EntryStruct `json:"entry,omitempty"`
+	Name      string        `json:"name,omitempty"`
 }
 
 // Get the Keyvaluemap
@@ -57,11 +55,6 @@ func (s *KeyValueMapsServiceOp) Create(keyValueMap KeyValueMap, env string) (*Ke
 
 	return postOrPutKeyValueMap(keyValueMap, env, "POST", s)
 }
-
-// Update an existing key value map
-//func (s *KeyValueMapsServiceOp) Update(keyValueMap KeyValueMap, env string) (*KeyValueMap, *Response, error) {
-//	return postOrPutKeyValueMap(keyValueMap, env, "PUT", s)
-//}
 
 // Delete an existing key value map
 func (s *KeyValueMapsServiceOp) Delete(name string, env string) (*Response, error) {

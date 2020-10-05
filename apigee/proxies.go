@@ -5,16 +5,16 @@ const proxiesPath = "apis"
 // ProxiesService is an interface for interfacing with the Apigee Admin API
 // dealing with apiproxies.
 type ProxiesService interface {
-	List() ([]string, *Response, error)
-	Get(string) (*DeployableAsset, *Response, error)
-	Import(string, string) (*DeployableRevision, *Response, error)
 	Delete(string) (*DeletedItemInfo, *Response, error)
 	DeleteRevision(string, Revision) (*DeployableRevision, *Response, error)
 	Deploy(string, string, Revision) (*RevisionDeployment, *Response, error)
 	DeployAtPath(string, string, string, Revision) (*RevisionDeployment, *Response, error)
-	Undeploy(string, string, Revision) (*RevisionDeployment, *Response, error)
 	Export(string, Revision) (string, *Response, error)
+	Get(string) (*DeployableAsset, *Response, error)
 	GetDeployments(string) (*Deployment, *Response, error)
+	Import(string, string) (*DeployableRevision, *Response, error)
+	List() ([]string, *Response, error)
+	Undeploy(string, string, Revision) (*RevisionDeployment, *Response, error)
 }
 
 type ProxiesServiceOp struct {

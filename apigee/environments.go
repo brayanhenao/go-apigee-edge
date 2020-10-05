@@ -9,8 +9,8 @@ const environmentsPath = "environments"
 // EnvironmentsService is an interface for interfacing with the Apigee Edge Admin API
 // querying Edge environments.
 type EnvironmentsService interface {
-	List() ([]string, *Response, error)
 	Get(string) (*Environment, *Response, error)
+	List() ([]string, *Response, error)
 }
 
 type EnvironmentsServiceOp struct {
@@ -21,12 +21,12 @@ var _ EnvironmentsService = &EnvironmentsServiceOp{}
 
 // Environment contains information about an environment within an Edge organization.
 type Environment struct {
-	Name           string          `json:"name,omitempty"`
-	CreatedBy      string          `json:"createdBy,omitempty"`
-	CreatedAt      Timestamp       `json:"createdAt,omitempty"`
-	LastModifiedBy string          `json:"lastModifiedBy,omitempty"`
-	LastModifiedAt Timestamp       `json:"lastModifiedAt,omitempty"`
-	Properties     PropertyWrapper `json:"properties,omitempty"`
+	CreatedAt      Timestamp   `json:"createdAt,omitempty"`
+	CreatedBy      string      `json:"createdBy,omitempty"`
+	LastModifiedAt Timestamp   `json:"lastModifiedAt,omitempty"`
+	LastModifiedBy string      `json:"lastModifiedBy,omitempty"`
+	Name           string      `json:"name,omitempty"`
+	Properties     []Attribute `json:"properties,omitempty"`
 }
 
 // List retrieves the list of environment names for the organization referred by the ApigeeClient.

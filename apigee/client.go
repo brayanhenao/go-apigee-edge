@@ -28,18 +28,19 @@ type ApigeeClient struct {
 	// Services used for communicating with the API
 	Caches                CachesService
 	Companies             CompaniesService
-	CompanyApps           CompanyAppsService
 	CompanyAppCredentials CompanyAppCredentialsService
+	CompanyApps           CompanyAppsService
+	DeveloperApps         DeveloperAppsService
 	Developers            DevelopersService
 	Environments          EnvironmentsService
-	KeyValueMaps          KeyValueMapsService
 	KeyValueMapEntries    KeyValueMapEntriesService
+	KeyValueMaps          KeyValueMapsService
 	Options               ApigeeClientOptions
 	Organization          OrganizationService
 	Products              ProductsService
 	Proxies               ProxiesService
-	TargetServers         TargetServersService
 	SharedFlows           SharedFlowsService
+	TargetServers         TargetServersService
 
 	// Account           AccountService
 	// Actions           ActionsService

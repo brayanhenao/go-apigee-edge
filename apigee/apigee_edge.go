@@ -24,12 +24,12 @@ import (
 )
 
 const (
-	libraryVersion  = "0.2.0"
-	defaultBaseURL  = "https://api.enterprise.apigee.com/"
-	userAgent       = "go-apigee-edge/" + libraryVersion
 	appJson         = "application/json"
-	octetStream     = "application/octet-stream"
+	defaultBaseURL  = "https://api.enterprise.apigee.com/"
 	deploymentDelay = "20"
+	libraryVersion  = "0.2.0"
+	octetStream     = "application/octet-stream"
+	userAgent       = "go-apigee-edge/" + libraryVersion
 )
 
 // RequestCompletionCallback defines the type of the request callback function
@@ -105,18 +105,19 @@ func NewApigeeClient(o *ApigeeClientOptions) (*ApigeeClient, error) {
 	c := &ApigeeClient{client: httpClient, BaseURL: baseURL, UserAgent: userAgent}
 	c.Caches = &CachesServiceOp{client: c}
 	c.Companies = &CompaniesServiceOp{client: c}
-	c.CompanyApps = &CompanyAppsServiceOp{client: c}
 	c.CompanyAppCredentials = &CompanyAppCredentialsServiceOp{client: c}
+	c.CompanyApps = &CompanyAppsServiceOp{client: c}
+	c.DeveloperApps = &DeveloperAppsServiceOp{client: c}
 	c.Developers = &DevelopersServiceOp{client: c}
 	c.Environments = &EnvironmentsServiceOp{client: c}
-	c.KeyValueMaps = &KeyValueMapsServiceOp{client: c}
 	c.KeyValueMapEntries = &KeyValueMapEntriesServiceOp{client: c}
+	c.KeyValueMaps = &KeyValueMapsServiceOp{client: c}
 	c.Options = *o
 	c.Organization = &OrganizationServiceOp{client: c}
 	c.Products = &ProductsServiceOp{client: c}
 	c.Proxies = &ProxiesServiceOp{client: c}
-	c.TargetServers = &TargetServersServiceOp{client: c}
 	c.SharedFlows = &SharedFlowsServiceOp{client: c}
+	c.TargetServers = &TargetServersServiceOp{client: c}
 
 	var e error = nil
 	if o.Auth == nil {

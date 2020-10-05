@@ -11,14 +11,14 @@ const developersPath = "developers"
 // DevelopersService is an interface for interfacing with the Apigee Edge Admin API
 // dealing with developers.
 type DevelopersService interface {
-	List() ([]string, *Response, error)
-	Get(string) (*Developer, *Response, error)
-	Create(Developer) (*Developer, *Response, error)
-	Update(Developer) (*Developer, *Response, error)
-	Delete(string) (*Developer, *Response, error)
-	Revoke(string) (*Response, error)
 	Approve(string) (*Response, error)
 	Apps(string) DeveloperAppsService
+	Create(Developer) (*Developer, *Response, error)
+	Delete(string) (*Developer, *Response, error)
+	Get(string) (*Developer, *Response, error)
+	List() ([]string, *Response, error)
+	Revoke(string) (*Response, error)
+	Update(Developer) (*Developer, *Response, error)
 }
 
 type DevelopersServiceOp struct {
@@ -29,16 +29,16 @@ var _ DevelopersService = &DevelopersServiceOp{}
 
 // Developer contains information about a registered Developer within an Edge organization.
 type Developer struct {
-	UserName         string     `json:"userName,omitempty"`
-	LastName         string     `json:"lastName,omitempty"`
-	FirstName        string     `json:"firstName,omitempty"`
-	Status           string     `json:"status,omitempty"` // active, inactive, ??
+	Apps             []string    `json:"apps,omitempty"`
 	Attributes       []Attribute `json:"attributes,omitempty"`
-	Companies        []string   `json:"companies,omitempty"`
-	OrganizationName string     `json:"organizationName,omitempty"`
-	Email            string     `json:"email,omitempty"`
-	Id               string     `json:"uuid,omitempty"`
-	Apps             []string   `json:"apps,omitempty"`
+	Companies        []string    `json:"companies,omitempty"`
+	Email            string      `json:"email,omitempty"`
+	FirstName        string      `json:"firstName,omitempty"`
+	Id               string      `json:"uuid,omitempty"`
+	LastName         string      `json:"lastName,omitempty"`
+	OrganizationName string      `json:"organizationName,omitempty"`
+	Status           string      `json:"status,omitempty"` // active, inactive, ??
+	UserName         string      `json:"userName,omitempty"`
 }
 
 func (s *DevelopersServiceOp) Update(dev Developer) (*Developer, *Response, error) {

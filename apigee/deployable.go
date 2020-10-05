@@ -16,38 +16,38 @@ import (
 
 // DeployableAsset contains information about an API Proxy or SharedFlow within an Apigee organization.
 type DeployableAsset struct {
-	Revisions []Revision         `json:"revision,omitempty"`
-	Name      string             `json:"name,omitempty"`
 	MetaData  DeployableMetadata `json:"metaData,omitempty"`
+	Name      string             `json:"name,omitempty"`
+	Revisions []Revision         `json:"revision,omitempty"`
 }
 
 // DeployableRevision holds information about a revision of an API Proxy, or a SharedFlow.
 type DeployableRevision struct {
-	Name            string    `json:"name,omitempty"`
-	DisplayName     string    `json:"displayName,omitempty"`
-	Revision        Revision  `json:"revision,omitempty"`
-	CreatedBy       string    `json:"createdBy,omitempty"`
-	CreatedAt       Timestamp `json:"createdAt,omitempty"`
-	LastModifiedBy  string    `json:"lastModifiedBy,omitempty"`
-	LastModifiedAt  Timestamp `json:"lastModifiedAt,omitempty"`
-	Description     string    `json:"description,omitempty"`
 	ContextInfo     string    `json:"contextInfo,omitempty"`
+	CreatedAt       Timestamp `json:"createdAt,omitempty"`
+	CreatedBy       string    `json:"createdBy,omitempty"`
+	Description     string    `json:"description,omitempty"`
+	DisplayName     string    `json:"displayName,omitempty"`
+	LastModifiedAt  Timestamp `json:"lastModifiedAt,omitempty"`
+	LastModifiedBy  string    `json:"lastModifiedBy,omitempty"`
+	Name            string    `json:"name,omitempty"`
+	Policies        []string  `json:"policies,omitempty"`
+	ProxyEndpoints  []string  `json:"proxyEndpoints,omitempty"`
+	Resources       []string  `json:"resources,omitempty"`
+	Revision        Revision  `json:"revision,omitempty"`
+	SharedFlows     []string  `json:"sharedFlows,omitempty"`
 	TargetEndpoints []string  `json:"targetEndpoints,omitempty"`
 	TargetServers   []string  `json:"targetServers,omitempty"`
-	Resources       []string  `json:"resources,omitempty"`
-	ProxyEndpoints  []string  `json:"proxyEndpoints,omitempty"`
-	SharedFlows     []string  `json:"sharedFlows,omitempty"`
-	Policies        []string  `json:"policies,omitempty"`
 	Type            string    `json:"type,omitempty"`
 }
 
 // ProxyMetadata contains information related to the creation and last modified
 // time and actor for an API Proxy within an organization.
 type DeployableMetadata struct {
-	LastModifiedBy string    `json:"lastModifiedBy,omitempty"`
+	CreatedAt      Timestamp `json:"createdAt,omitempty"`
 	CreatedBy      string    `json:"createdBy,omitempty"`
 	LastModifiedAt Timestamp `json:"lastModifiedAt,omitempty"`
-	CreatedAt      Timestamp `json:"createdAt,omitempty"`
+	LastModifiedBy string    `json:"lastModifiedBy,omitempty"`
 }
 
 // When Delete returns successfully, it returns a payload that contains very little useful
@@ -66,8 +66,8 @@ type DeletedItemInfo struct {
 // API Proxy, this struct will hold relevant information.
 type ApigeeServer struct {
 	Status string   `json:"status,omitempty"`
-	Uuid   string   `json:"uUID,omitempty"`
 	Type   []string `json:"type,omitempty"`
+	Uuid   string   `json:"uUID,omitempty"`
 }
 
 // Deployment (nee ProxyDeployment) holds information about the deployment state of a
@@ -85,8 +85,8 @@ type EnvironmentDeployment struct {
 
 type RevisionDeployment struct {
 	Number  Revision       `json:"name,omitempty"`
-	State   string         `json:"state,omitempty"`
 	Servers []ApigeeServer `json:"server,omitempty"`
+	State   string         `json:"state,omitempty"`
 }
 
 type Deployable struct{}

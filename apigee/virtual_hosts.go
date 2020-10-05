@@ -9,10 +9,10 @@ const virtualhostsPath = "virtualhosts"
 // VirtualHostService is an interface for interfacing with the Apigee Edge Admin API
 // dealing with target servers.
 type VirtualHostsService interface {
-	List(string) ([]string, *Response, error)
-	Get(string, string) (*VirtualHost, *Response, error)
 	Create(VirtualHost, string) (*VirtualHost, *Response, error)
 	Delete(string, string) (*Response, error)
+	Get(string, string) (*VirtualHost, *Response, error)
+	List(string) ([]string, *Response, error)
 	Update(VirtualHost, string) (*VirtualHost, *Response, error)
 }
 
@@ -24,16 +24,16 @@ var _ VirtualHostsService = &VirtualHostsServiceOp{}
 
 // https://docs.apigee.com/api-platform/fundamentals/virtual-host-property-reference
 type VirtualHost struct {
-	Name        string   `json:"name,omitempty"`
-	HostAliases []string `json:"hostAliases,omitempty"`
-	Port        int      `json:"port,omitempty"`
 	// Interfaces           []string   `json:"interfaces,omitempty"`
-	RetryOptions  []string `json:"retryOptions,omitempty"`
-	ListenOptions []string `json:"listenOptions,omitempty"`
-	BaseUrl       string   `json:"baseUrl,omitempty"`
-	SSLInfo       []string `json:"sSLInfo,omitempty"`
 	// PropagateTLSInformation hash    `json:"propagateTLSInformation,omitempty"`
-	Properties []string `json:"properties,omitempty"`
+	BaseUrl       string   `json:"baseUrl,omitempty"`
+	HostAliases   []string `json:"hostAliases,omitempty"`
+	ListenOptions []string `json:"listenOptions,omitempty"`
+	Name          string   `json:"name,omitempty"`
+	Port          int      `json:"port,omitempty"`
+	Properties    []string `json:"properties,omitempty"`
+	RetryOptions  []string `json:"retryOptions,omitempty"`
+	SSLInfo       []string `json:"sSLInfo,omitempty"`
 }
 
 func (s *VirtualHostsServiceOp) List(env string) ([]string, *Response, error) {

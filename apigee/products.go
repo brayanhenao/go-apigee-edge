@@ -10,11 +10,11 @@ const productsPath = "apiproducts"
 // ProductsService is an interface for interfacing with the Apigee Edge Admin API
 // dealing with apiproducts.
 type ProductsService interface {
-	List() ([]string, *Response, error)
-	Get(string) (*ApiProduct, *Response, error)
 	Create(ApiProduct) (*ApiProduct, *Response, error)
-	Update(ApiProduct) (*ApiProduct, *Response, error)
 	Delete(string) (*ApiProduct, *Response, error)
+	Get(string) (*ApiProduct, *Response, error)
+	List() ([]string, *Response, error)
+	Update(ApiProduct) (*ApiProduct, *Response, error)
 }
 
 type ProductsServiceOp struct {
@@ -25,19 +25,22 @@ var _ ProductsService = &ProductsServiceOp{}
 
 // ApiProduct contains information about an API Product within an Edge organization.
 type ApiProduct struct {
-	Name           string     `json:"name,omitempty"`
-	ApiResources   []string   `json:"apiResources,omitempty"`
-	ApprovalType   string     `json:"approvalType,omitempty"`
-	Attributes     Attributes `json:"attributes,omitempty"`
-	CreatedBy      string     `json:"createdBy,omitempty"`
-	CreatedAt      Timestamp  `json:"createdAt,omitempty"`
-	Description    string     `json:"description,omitempty"`
-	DisplayName    string     `json:"displayName,omitempty"`
-	LastModifiedBy string     `json:"lastModifiedBy,omitempty"`
-	LastModifiedAt Timestamp  `json:"lastModifiedAt,omitempty"`
-	Environments   []string   `json:"environments,omitempty"`
-	Proxies        []string   `json:"proxies,omitempty"`
-	Scopes         []string   `json:"scopes,omitempty"`
+	ApiResources   []string    `json:"apiResources,omitempty"`
+	ApprovalType   string      `json:"approvalType,omitempty"`
+	Attributes     []Attribute `json:"attributes,omitempty"`
+	CreatedAt      Timestamp   `json:"createdAt,omitempty"`
+	CreatedBy      string      `json:"createdBy,omitempty"`
+	Description    string      `json:"description,omitempty"`
+	DisplayName    string      `json:"displayName,omitempty"`
+	Environments   []string    `json:"environments,omitempty"`
+	LastModifiedAt Timestamp   `json:"lastModifiedAt,omitempty"`
+	LastModifiedBy string      `json:"lastModifiedBy,omitempty"`
+	Name           string      `json:"name,omitempty"`
+	Proxies        []string    `json:"proxies,omitempty"`
+	Quota          string      `json:"quota,omitempty"`
+	QuotaInterval  string      `json:"quotaInterval,omitempty"`
+	QuotaTimeUnit  string      `json:"quotaTimeUnit,omitempty"`
+	Scopes         []string    `json:"scopes,omitempty"`
 }
 
 func reallyUpdateProduct(s ProductsServiceOp, product ApiProduct) (*ApiProduct, *Response, error) {

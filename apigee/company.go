@@ -9,9 +9,9 @@ const companiesPath = "companies"
 // CompanyService is an interface for interfacing with the Apigee Edge Admin API
 // dealing with companies.
 type CompaniesService interface {
-	Get(string) (*Company, *Response, error)
 	Create(Company) (*Company, *Response, error)
 	Delete(string) (*Response, error)
+	Get(string) (*Company, *Response, error)
 	Update(Company) (*Company, *Response, error)
 }
 
@@ -22,12 +22,11 @@ type CompaniesServiceOp struct {
 var _ CompaniesService = &CompaniesServiceOp{}
 
 type Company struct {
-	Name        string      `json:"name,omitempty"`
-	DisplayName string      `json:"displayName,omitempty"`
+	Apps        []string    `json:"apps,omitempty"`
 	Attributes  []Attribute `json:"attributes,omitempty"`
-
-	Status string   `json:"status,omitempty"`
-	Apps   []string `json:"apps,omitempty"`
+	DisplayName string      `json:"displayName,omitempty"`
+	Name        string      `json:"name,omitempty"`
+	Status      string      `json:"status,omitempty"`
 }
 
 func (s *CompaniesServiceOp) Get(name string) (*Company, *Response, error) {

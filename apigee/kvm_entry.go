@@ -7,9 +7,9 @@ const entriesPath = "entries"
 // KeyValueMapEntriesService is an interface for interfacing with the Apigee Edge Admin API
 // dealing with KeyValueMapEntry.
 type KeyValueMapEntriesService interface {
-	Get(string, string, string) (*KeyValueMapEntry, *Response, error)
 	Create(string, KeyValueMapEntryKeys, string) (*KeyValueMapEntry, *Response, error)
 	Delete(string, string, string) (*Response, error)
+	Get(string, string, string) (*KeyValueMapEntry, *Response, error)
 	Update(string, KeyValueMapEntryKeys, string) (*KeyValueMapEntry, *Response, error)
 }
 
@@ -28,8 +28,8 @@ type KeyValueMapEntryKeys struct {
 
 // KeyValueMapEntry Holds the Key value map
 type KeyValueMapEntry struct {
-	KVMName string                 `json:"kvmName,omitempty"`
 	Entry   []KeyValueMapEntryKeys `json:"entry,omitempty"`
+	KVMName string                 `json:"kvmName,omitempty"`
 }
 
 // Get the key value map entry

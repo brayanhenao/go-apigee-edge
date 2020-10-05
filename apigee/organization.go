@@ -36,15 +36,15 @@ var _ OrganizationService = &OrganizationServiceOp{}
 // }
 
 type Organization struct {
-	LastModifiedBy string          `json:"lastModifiedBy,omitempty"`
-	CreatedBy      string          `json:"createdBy,omitempty"`
-	LastModifiedAt Timestamp       `json:"lastModifiedAt,omitempty"`
-	CreatedAt      Timestamp       `json:"createdAt,omitempty"`
-	DisplayName    string          `json:"displayName,omitempty"`
-	Environments   []string        `json:"environments,omitempty"`
-	Name           string          `json:"name,omitempty"`
-	Type           string          `json:"type,omitempty"`
-	Properties     PropertyWrapper `json:"properties,omitempty"`
+	CreatedAt      Timestamp   `json:"createdAt,omitempty"`
+	CreatedBy      string      `json:"createdBy,omitempty"`
+	DisplayName    string      `json:"displayName,omitempty"`
+	Environments   []string    `json:"environments,omitempty"`
+	LastModifiedAt Timestamp   `json:"lastModifiedAt,omitempty"`
+	LastModifiedBy string      `json:"lastModifiedBy,omitempty"`
+	Name           string      `json:"name,omitempty"`
+	Properties     []Attribute `json:"properties,omitempty"`
+	Type           string      `json:"type,omitempty"`
 }
 
 // Get retrieves the information about an Organization, information including

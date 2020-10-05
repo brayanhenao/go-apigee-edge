@@ -19,20 +19,20 @@ const (
 )
 
 type ISOTimes struct {
-	IssuedAt string `json:"issued_at,omitempty"`
 	Expires  string `json:"expires,omitempty"`
+	IssuedAt string `json:"issued_at,omitempty"`
 }
 
 type AuthToken struct {
 	AccessToken  *string   `json:"access_token,omitempty"`
-	RefreshToken *string   `json:"refresh_token,omitempty"`
-	TokenType    *string   `json:"token_type,omitempty"`
-	Lifetime     int64     `json:"expires_in,omitempty"`
 	Expires      int64     `json:"expires,omitempty"`
-	Scope        *string   `json:"scope,omitempty"`
+	ISO          *ISOTimes `json:"ISO,omitempty"`
 	Id           *string   `json:"jti,omitempty"`
 	IssuedAt     int64     `json:"issued_at,omitempty"`
-	ISO          *ISOTimes `json:"ISO,omitempty"`
+	Lifetime     int64     `json:"expires_in,omitempty"`
+	RefreshToken *string   `json:"refresh_token,omitempty"`
+	Scope        *string   `json:"scope,omitempty"`
+	TokenType    *string   `json:"token_type,omitempty"`
 }
 
 func resolveAnyTildes(v string) string {

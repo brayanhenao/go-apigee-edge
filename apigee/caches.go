@@ -9,8 +9,8 @@ const cachesPath = "caches"
 // CachesService is an interface for interfacing with the Apigee Edge Admin API
 // dealing with caches.
 type CachesService interface {
-	List(string) ([]string, *Response, error)
 	Get(string, string) (*Cache, *Response, error)
+	List(string) ([]string, *Response, error)
 }
 
 type CachesServiceOp struct {
@@ -21,16 +21,16 @@ var _ CachesService = &CachesServiceOp{}
 
 // Cache contains information about a cache within an Edge organization.
 type Cache struct {
-	Name                string      `json:"name,omitempty"`
 	Description         string      `json:"description,omitempty"`
-	OverflowToDisk      bool        `json:"overflowToDisk,omitempty"`
-	Persistent          bool        `json:"persistent,omitempty"`
-	Distributed         bool        `json:"distributed,omitempty"`
 	DiskSizeInMB        int         `json:"diskSizeInMB,omitempty"`
+	Distributed         bool        `json:"distributed,omitempty"`
+	Expiry              CacheExpiry `json:"expirySettings,omitempty"`
 	InMemorySizeInKB    int         `json:"inMemorySizeInKB,omitempty"`
 	MaxElementsInMemory int         `json:"maxElementsInMemory,omitempty"`
 	MaxElementsOnDisk   int         `json:"maxElementsOnDisk,omitempty"`
-	Expiry              CacheExpiry `json:"expirySettings,omitempty"`
+	Name                string      `json:"name,omitempty"`
+	OverflowToDisk      bool        `json:"overflowToDisk,omitempty"`
+	Persistent          bool        `json:"persistent,omitempty"`
 }
 
 // List retrieves the list of cache names for the organization referred by the ApigeeClient,

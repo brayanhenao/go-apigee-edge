@@ -9,12 +9,12 @@ import (
 // DeveloperAppsService is an interface for interfacing with the Apigee Edge Admin API
 // dealing with apps that belong to a particular developer.
 type DeveloperAppsService interface {
+	Approve(string) (*Response, error)
 	Create(DeveloperApp) (*DeveloperApp, *Response, error)
 	Delete(string) (*DeveloperApp, *Response, error)
-	Revoke(string) (*Response, error)
-	Approve(string) (*Response, error)
-	List() ([]string, *Response, error)
 	Get(string) (*DeveloperApp, *Response, error)
+	List() ([]string, *Response, error)
+	Revoke(string) (*Response, error)
 	Update(DeveloperApp) (*DeveloperApp, *Response, error)
 }
 
@@ -27,14 +27,14 @@ var _ DeveloperAppsService = &DeveloperAppsServiceOp{}
 
 // DeveloperApp holds information about a registered DeveloperApp.
 type DeveloperApp struct {
-	Name             string     `json:"name,omitempty"`
-	ApiProducts      []string   `json:"apiProducts,omitempty"`
-	InitialKeyExpiry string     `json:"keyExpiresIn,omitempty"`
-	Attributes       Attributes `json:"attributes,omitempty"`
-	Id               string     `json:"appId,omitempty"`
-	DeveloperId      string     `json:"developerId,omitempty"`
-	Scopes           []string   `json:"scopes,omitempty"`
-	Status           string     `json:"status,omitempty"`
+	ApiProducts      []string    `json:"apiProducts,omitempty"`
+	Attributes       []Attribute `json:"attributes,omitempty"`
+	DeveloperId      string      `json:"developerId,omitempty"`
+	Id               string      `json:"appId,omitempty"`
+	InitialKeyExpiry string      `json:"keyExpiresIn,omitempty"`
+	Name             string      `json:"name,omitempty"`
+	Scopes           []string    `json:"scopes,omitempty"`
+	Status           string      `json:"status,omitempty"`
 }
 
 func (s *DeveloperAppsServiceOp) Create(app DeveloperApp) (*DeveloperApp, *Response, error) {

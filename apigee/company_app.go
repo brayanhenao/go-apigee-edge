@@ -9,9 +9,9 @@ const appPath = "apps"
 // CompanyAppsService is an interface for interfacing with the Apigee Edge Admin API
 // dealing with companyApps.
 type CompanyAppsService interface {
-	Get(string, string) (*CompanyApp, *Response, error)
 	Create(string, CompanyApp) (*CompanyApp, *Response, error)
 	Delete(string, string) (*Response, error)
+	Get(string, string) (*CompanyApp, *Response, error)
 	Update(string, CompanyApp) (*CompanyApp, *Response, error)
 }
 
@@ -22,15 +22,15 @@ type CompanyAppsServiceOp struct {
 var _ CompanyAppsService = &CompanyAppsServiceOp{}
 
 type CompanyApp struct {
-	Name        string       `json:"name,omitempty"`
 	ApiProducts []string     `json:"apiProducts,omitempty"`
-	Attributes  []Attribute  `json:"attributes,omitempty"`
-	Scopes      []string     `json:"scopes,omitempty"`
-	CallbackUrl string       `json:"callbackUrl,omitempty"`
-	Credentials []Credential `json:"credentials,omitempty"`
-	AppId       string       `json:"appId,omitempty"`
-	CompanyName string       `json:"companyName,omitempty"`
 	AppFamily   string       `json:"appFamily,omitempty"`
+	AppId       string       `json:"appId,omitempty"`
+	Attributes  []Attribute  `json:"attributes,omitempty"`
+	CallbackUrl string       `json:"callbackUrl,omitempty"`
+	CompanyName string       `json:"companyName,omitempty"`
+	Credentials []Credential `json:"credentials,omitempty"`
+	Name        string       `json:"name,omitempty"`
+	Scopes      []string     `json:"scopes,omitempty"`
 	Status      string       `json:"status,omitempty"`
 }
 

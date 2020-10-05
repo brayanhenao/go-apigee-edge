@@ -10,10 +10,10 @@ const keysPath = "keys"
 // dealing with companyApp credentials/keys.
 type CompanyAppCredentialsService interface {
 	Create(string, string, Credential) (*Credential, *Response, error)
-	Update(string, string, string, Credential) (*Credential, *Response, error)
-	Get(string, string, string) (*Credential, *Response, error)
 	Delete(string, string, string) (*Response, error)
+	Get(string, string, string) (*Credential, *Response, error)
 	RemoveApiProduct(string, string, string, string) (*Response, error)
+	Update(string, string, string, Credential) (*Credential, *Response, error)
 }
 
 type CompanyAppCredentialsServiceOp struct {
