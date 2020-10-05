@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	proxyBundleDir = "testdata/proxybundles"
+	proxyBundleDir = "../testdata/proxybundles"
 )
 
 func getProxyZipFiles(t *testing.T) []os.FileInfo {

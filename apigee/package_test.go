@@ -12,7 +12,7 @@ import (
 const (
 	letterBytes    = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	testPrefix     = "go-test"
-	testConfigFile = "testdata/test_config.json"
+	testConfigFile = "../testdata/test_config.json"
 )
 
 var apigeeClient ApigeeClient
