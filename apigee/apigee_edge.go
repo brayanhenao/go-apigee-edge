@@ -247,6 +247,49 @@ func (c *ApigeeClient) NewRequest(method, urlStr string, body interface{}) (*htt
 	return req, nil
 }
 
+// NewRequest creates an API request using application/x-www-form-urlencoded header.
+func (c *ApigeeClient) NewDeployableRequest(method, urlStr string) (*http.Request, error) {
+	rel, e := url.Parse(urlStr)
+	if e != nil {
+		return nil, e
+	}
+	u := c.BaseURL.ResolveReference(rel)
+	// u, err := url.Parse(c.BaseURL)
+	// if err != nil {
+	//    return nil,err
+	// }
+	//
+	// c.BaseURL = u
+	u.Path = path.Join(c.BaseURL.Path, rel.Path)
+
+	if c.debug {
+		fmt.Printf("u: %#v\n", u)
+	}
+
+	req, e := http.NewRequest(method, u.String(), nil)
+
+	if e != nil {
+		return nil, e
+	}
+
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Add("Accept", appJson)
+	req.Header.Add("User-Agent", c.UserAgent)
+
+	if c.WantToken {
+		token, e := GetToken(c)
+		if e != nil {
+			return nil, e
+		}
+
+		c.auth.Token = *token.AccessToken
+		req.Header.Add("Authorization", "Bearer "+c.auth.Token)
+	} else {
+		req.SetBasicAuth(c.auth.Username, c.auth.Password)
+	}
+	return req, nil
+}
+
 // sets the request completion callback for the API
 func (c *ApigeeClient) OnRequestCompleted(rc RequestCompletionCallback) {
 	c.onRequestCompleted = rc

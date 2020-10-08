@@ -376,7 +376,7 @@ func (s *Deployable) Deploy(client *ApigeeClient, uriPathElement, assetName, bas
 	origURL.RawQuery = q.Encode()
 	path = origURL.String()
 
-	req, e := client.NewRequest("POST", path, nil)
+	req, e := client.NewDeployableRequest("POST", path)
 	if e != nil {
 		return nil, nil, e
 	}
