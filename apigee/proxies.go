@@ -7,8 +7,8 @@ const proxiesPath = "apis"
 type ProxiesService interface {
 	Delete(string) (*DeletedItemInfo, *Response, error)
 	DeleteRevision(string, Revision) (*DeployableRevision, *Response, error)
-	Deploy(string, string, Revision) (*RevisionDeployment, *Response, error)
-	DeployAtPath(string, string, string, Revision) (*RevisionDeployment, *Response, error)
+	Deploy(string, string, Revision, bool) (*RevisionDeployment, *Response, error)
+	DeployAtPath(string, string, string, Revision, bool) (*RevisionDeployment, *Response, error)
 	Export(string, Revision) (string, *Response, error)
 	Get(string) (*DeployableAsset, *Response, error)
 	GetDeployments(string) (*Deployment, *Response, error)
@@ -76,13 +76,13 @@ func (s *ProxiesServiceOp) Undeploy(proxyName, env string, rev Revision) (*Revis
 }
 
 // Deploy a revision of an API proxy to a specific environment within an organization.
-func (s *ProxiesServiceOp) Deploy(proxyName, env string, rev Revision) (*RevisionDeployment, *Response, error) {
-	return s.deployable.Deploy(s.client, proxiesPath, proxyName, "", env, rev)
+func (s *ProxiesServiceOp) Deploy(proxyName, env string, rev Revision, override bool) (*RevisionDeployment, *Response, error) {
+	return s.deployable.Deploy(s.client, proxiesPath, proxyName, "", env, rev, override)
 }
 
 // Deploy a revision of an API proxy to a specific environment within an organization.
-func (s *ProxiesServiceOp) DeployAtPath(proxyName, basepath, env string, rev Revision) (*RevisionDeployment, *Response, error) {
-	return s.deployable.Deploy(s.client, proxiesPath, proxyName, basepath, env, rev)
+func (s *ProxiesServiceOp) DeployAtPath(proxyName, basepath, env string, rev Revision, override bool) (*RevisionDeployment, *Response, error) {
+	return s.deployable.Deploy(s.client, proxiesPath, proxyName, basepath, env, rev, override)
 }
 
 // Delete an API Proxy and all its revisions from an organization. This method

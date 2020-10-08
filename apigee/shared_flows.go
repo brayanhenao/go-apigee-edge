@@ -7,7 +7,7 @@ const sharedFlowPath = "sharedflows"
 type SharedFlowsService interface {
 	Delete(string) (*DeletedItemInfo, *Response, error)
 	DeleteRevision(string, Revision) (*DeployableRevision, *Response, error)
-	Deploy(string, string, Revision) (*RevisionDeployment, *Response, error)
+	Deploy(string, string, Revision, bool) (*RevisionDeployment, *Response, error)
 	Export(string, Revision) (string, *Response, error)
 	Get(string) (*DeployableAsset, *Response, error)
 	GetDeployments(string) (*Deployment, *Response, error)
@@ -47,8 +47,8 @@ func (s *SharedFlowsServiceOp) Undeploy(proxyName, env string, rev Revision) (*R
 	return s.deployable.Undeploy(s.client, sharedFlowPath, proxyName, env, rev)
 }
 
-func (s *SharedFlowsServiceOp) Deploy(proxyName, env string, rev Revision) (*RevisionDeployment, *Response, error) {
-	return s.deployable.Deploy(s.client, sharedFlowPath, proxyName, "", env, rev)
+func (s *SharedFlowsServiceOp) Deploy(proxyName, env string, rev Revision, override bool) (*RevisionDeployment, *Response, error) {
+	return s.deployable.Deploy(s.client, sharedFlowPath, proxyName, "", env, rev, override)
 }
 
 func (s *SharedFlowsServiceOp) Delete(proxyName string) (*DeletedItemInfo, *Response, error) {
