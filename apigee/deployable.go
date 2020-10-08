@@ -358,7 +358,7 @@ func (s *Deployable) Undeploy(client *ApigeeClient, uriPathElement, assetName, e
 	return &deployment, resp, e
 }
 
-func (s *Deployable) Deploy(client *ApigeeClient, uriPathElement, assetName, basepath, env string, rev Revision, override bool) (*RevisionDeployment, *Response, error) {
+func (s *Deployable) Deploy(client *ApigeeClient, uriPathElement, assetName, basepath, env string, rev Revision, override bool, delay int) (*RevisionDeployment, *Response, error) {
 	path := path.Join(uriPathElement, assetName, "revisions", fmt.Sprintf("%d", rev), "deployments")
 	// append the query params
 	origURL, err := url.Parse(path)
@@ -368,7 +368,7 @@ func (s *Deployable) Deploy(client *ApigeeClient, uriPathElement, assetName, bas
 	q := origURL.Query()
 	q.Add("action", "deploy")
 	q.Add("override", strconv.FormatBool(override))
-	q.Add("delay", deploymentDelay)
+	q.Add("delay", strconv.Itoa(delay))
 	q.Add("env", env)
 	if basepath != "" {
 		q.Add("basepath", basepath)

@@ -24,12 +24,11 @@ import (
 )
 
 const (
-	appJson         = "application/json"
-	defaultBaseURL  = "https://api.enterprise.apigee.com/"
-	deploymentDelay = "20"
-	libraryVersion  = "0.2.0"
-	octetStream     = "application/octet-stream"
-	userAgent       = "go-apigee-edge/" + libraryVersion
+	appJson        = "application/json"
+	defaultBaseURL = "https://api.enterprise.apigee.com/"
+	libraryVersion = "0.2.0"
+	octetStream    = "application/octet-stream"
+	userAgent      = "go-apigee-edge/" + libraryVersion
 )
 
 // RequestCompletionCallback defines the type of the request callback function
