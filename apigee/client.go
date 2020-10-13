@@ -41,6 +41,7 @@ type ApigeeClient struct {
 	Proxies               ProxiesService
 	SharedFlows           SharedFlowsService
 	TargetServers         TargetServersService
+	VirtualHosts          VirtualHostsService
 
 	// Account           AccountService
 	// Actions           ActionsService

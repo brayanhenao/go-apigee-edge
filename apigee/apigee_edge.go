@@ -117,6 +117,7 @@ func NewApigeeClient(o *ApigeeClientOptions) (*ApigeeClient, error) {
 	c.Proxies = &ProxiesServiceOp{client: c}
 	c.SharedFlows = &SharedFlowsServiceOp{client: c}
 	c.TargetServers = &TargetServersServiceOp{client: c}
+	c.VirtualHosts = &VirtualHostsServiceOp{client: c}
 
 	var e error = nil
 	if o.Auth == nil {
