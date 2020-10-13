@@ -11,7 +11,7 @@ type KeyValueMapEntriesService interface {
 	Create(string, string, KeyValueMapEntryKeys) (*KeyValueMapEntry, *Response, error)
 	Delete(string, string, string) (*Response, error)
 	Get(string, string, string) (*KeyValueMapEntryKeys, *Response, error)
-	List(string, string, string) ([]string, *Response, error)
+	List(string, string) ([]string, *Response, error)
 	Update(string, string, KeyValueMapEntryKeys) (*KeyValueMapEntry, *Response, error)
 }
 
@@ -65,7 +65,7 @@ func (s *KeyValueMapEntriesServiceOp) Update(env string, keyValueMapName string,
 }
 
 // Delete an existing key value map entry
-func (s *KeyValueMapEntriesServiceOp) Delete(keyValueMapEntry string, keyValueMapName string, env string) (*Response, error) {
+func (s *KeyValueMapEntriesServiceOp) Delete(env string, keyValueMapName string, keyValueMapEntry string) (*Response, error) {
 
 	path := path.Join(environmentsPath, env, kvmPath, keyValueMapName, entriesPath, keyValueMapEntry)
 
@@ -83,7 +83,7 @@ func (s *KeyValueMapEntriesServiceOp) Delete(keyValueMapEntry string, keyValueMa
 
 }
 
-func (s *KeyValueMapEntriesServiceOp) List(env string, keyValueMapName string, keyValueMapEntry string) ([]string, *Response, error) {
+func (s *KeyValueMapEntriesServiceOp) List(env string, keyValueMapName string) ([]string, *Response, error) {
 	path := path.Join(environmentsPath, env, kvmPath, keyValueMapName, kvmEntryPath)
 
 	req, e := s.client.NewRequest("GET", path, nil)
