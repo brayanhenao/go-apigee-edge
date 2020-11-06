@@ -122,6 +122,8 @@ func NewApigeeClient(o *ApigeeClientOptions) (*ApigeeClient, error) {
 	var e error = nil
 	if o.Auth == nil {
 		c.auth, e = retrieveAuthFromNetrc("", baseURL.Host)
+	} else if o.Auth.Token != "" {
+		c.auth = &AdminAuth{Token: o.Auth.Token}
 	} else if o.Auth.Password == "" {
 		c.auth, e = retrieveAuthFromNetrc(o.Auth.NetrcPath, baseURL.Host)
 	} else {
